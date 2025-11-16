@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "124236460236",
+    "project_id": "songplayer-7c454",
+    "storage_bucket": "songplayer-7c454.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124236460236:android:0bab1574b96ac5edecd269",
+        "android_client_info": {
+          "package_name": "com.example.awe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdLBY7co836zess4NibhY-qZzfHfqWjcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
