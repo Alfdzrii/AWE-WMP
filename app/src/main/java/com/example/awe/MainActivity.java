@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     Button BtnRegist, BtnLogin;
+    EditText TxtEmail, TxtPassword, TxtUsername;
+    FirebaseAuth Auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +34,26 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        TxtEmail = findViewById(R.id.TxtEmail);
+        TxtPassword = findViewById(R.id.TxtPassword);
+        TxtUsername = findViewById(R.id.TxtUsername);
+        BtnLogin = findViewById(R.id.BtnLogin);
+        BtnRegist = findViewById(R.id.BtnRegist);
+        Auth = FirebaseAuth.getInstance();
+
+        BtnRegist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Email = TxtEmail.getText().toString();
+                String Password = TxtPassword.getText().toString();
+                String Username = TxtUsername.getText().toString();
+
+                if ( TextUtils.isEmpty(Email) || TextUtils.isEmpty(Password) || TextUtils.isEmpty(Username) ){
+
+                }
+            }
+        });
     }
-
-
-
 }
