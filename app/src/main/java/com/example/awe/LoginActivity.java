@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
@@ -13,6 +14,7 @@ public class LoginActivity extends AppCompatActivity {
     // 1. Deklarasikan variabel untuk view (komponen)
     EditText editTextEmail, editTextPassword;
     Button buttonLogin;
+    TextView textViewRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
+        textViewRegister = findViewById(R.id.textViewRegister);
 
         // 3. Beri aksi pada tombol (setOnClickListener)
         buttonLogin.setOnClickListener(v -> {
@@ -38,12 +41,18 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
 
                 // Pindah ke MainActivity (tempat teman Anda)
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                // Untuk sementara, kita anggap login berhasil dan tidak pindah halaman
+                // Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                // startActivity(intent);
 
-                // Tutup LoginActivity agar tidak bisa kembali
-                finish();
+                // finish();
             }
+        });
+
+        textViewRegister.setOnClickListener(v -> {
+            // Pindah ke MainActivity (halaman registrasi)
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
         });
     }
 }

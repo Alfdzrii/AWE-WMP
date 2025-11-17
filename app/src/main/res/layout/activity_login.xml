@@ -26,7 +26,7 @@
         android:textColorHint="@color/white"
         android:backgroundTint="@color/hijau"
         android:textColor="@color/white"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress|textNoSuggestions"/>
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -47,5 +47,27 @@
         android:backgroundTint="@color/hijau"
         android:textColor="@color/white"
         android:text="Login"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Tidak punya akun? "/>
+
+        <TextView
+            android:id="@+id/textViewRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hijau"
+            android:textStyle="bold"
+            android:text="Register"/>
+
+    </LinearLayout>
 
 </LinearLayout>
