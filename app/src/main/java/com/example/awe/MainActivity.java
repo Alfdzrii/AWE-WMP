@@ -19,8 +19,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
-
+//REGISTER PAGE
 public class MainActivity extends AppCompatActivity {
     Button BtnRegist;
     TextView textViewLogin;
@@ -54,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
                 String Username = TxtUsername.getText().toString();
 
                 if ( TextUtils.isEmpty(Email) || TextUtils.isEmpty(Password) || TextUtils.isEmpty(Username) ){
-
+                    Toast.makeText(getApplicationContext(), "Input username and password", Toast.LENGTH_SHORT).show();
+                } else {
+                    registUser(Email, Password, Username);
                 }
             }
         });
@@ -63,6 +67,36 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
+            }
+        });
+    }
+
+    private void registUser(String email, String password, final String username) {
+        Auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    FirebaseUser user = Auth.getCurrentUser();
+                    if (user != null) {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(username)
+                                .build();
+
+                        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "Register Berhasil", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Register Gagal: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
