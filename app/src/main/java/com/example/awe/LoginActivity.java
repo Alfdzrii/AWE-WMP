@@ -40,12 +40,10 @@ public class LoginActivity extends AppCompatActivity {
                 // Anggap login berhasil jika diisi
                 Toast.makeText(LoginActivity.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
 
-                // Pindah ke MainActivity (tempat teman Anda)
-                // Untuk sementara, kita anggap login berhasil dan tidak pindah halaman
-                // Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                // startActivity(intent);
-
-                // finish();
+                // Pindah ke HomeActivity
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish(); // Menutup LoginActivity agar tidak bisa kembali
             }
         });
 
