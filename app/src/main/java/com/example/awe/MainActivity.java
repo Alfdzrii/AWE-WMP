@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "Register Berhasil", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Success to Register!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
                                 }
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Register Gagal: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Register is denied: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
