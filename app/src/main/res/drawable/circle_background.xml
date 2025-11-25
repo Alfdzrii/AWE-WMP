@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Ganti warna ini sesuai keinginan Anda, misalnya hitam transparan -->
+    <solid android:color="#80000000" />
+
+</shape>
+    
