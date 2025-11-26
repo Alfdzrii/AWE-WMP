@@ -14,10 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast; // <-- TAMBAHKAN INI
+import android.widget.EditText; // <-- TAMBAHKAN INI
+import android.text.InputType; // <-- TAMBAHKAN INI
+import androidx.appcompat.app.AlertDialog; // <-- TAMBAHKAN INI
 
 // Import yang dibutuhkan dari Firebase
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore; // <-- TAMBAHKAN INI
+import com.google.firebase.auth.UserProfileChangeRequest; // <-- TAMBAHKAN INI
 
 // Import library lain yang dibutuhkan
 import com.bumptech.glide.Glide;
@@ -31,6 +37,7 @@ public class ProfileFragment extends Fragment {
     // Deklarasi variabel untuk Firebase
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private FirebaseFirestore db;
 
     // Deklarasi variabel untuk UI
     private TabLayout tabLayout;
@@ -40,6 +47,7 @@ public class ProfileFragment extends Fragment {
     private TextView textUsername;
     private TextView textBio; // Jika Anda ingin mengatur bio juga
     private CircleImageView profileImage;
+    private ImageView editProfileImageButton;
 
 
     @Override
@@ -56,6 +64,8 @@ public class ProfileFragment extends Fragment {
         // Inisialisasi Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
 
         // Inisialisasi Views dari layout
         tabLayout = view.findViewById(R.id.tab_layout);
@@ -64,9 +74,14 @@ public class ProfileFragment extends Fragment {
         textUsername = view.findViewById(R.id.text_username);
         textBio = view.findViewById(R.id.text_bio); // Inisialisasi TextView untuk bio
         profileImage = view.findViewById(R.id.profile_image);
+        editProfileImageButton = view.findViewById(R.id.edit_profile_image_button);
+
 
         // Panggil method untuk update UI
         updateProfileUI();
+
+        editProfileImageButton.setOnClickListener(v -> showEditPhotoDialog());
+        textBio.setOnClickListener(v -> showEditBioDialog());
 
         // Mengatur Toolbar
         if (getActivity() != null) {
@@ -129,5 +144,17 @@ public class ProfileFragment extends Fragment {
             // String email = currentUser.getEmail();
             // textBio.setText(email);
         }
+    }
+
+    private void showEditPhotoDialog() {
+        if (getcontext() != null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Edit Foto Profil");
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input)
+
     }
 }
