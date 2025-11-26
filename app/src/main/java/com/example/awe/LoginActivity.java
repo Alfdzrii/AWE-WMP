@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class LoginActivity extends AppCompatActivity {
 
     // 1. Deklarasikan variabel
@@ -61,11 +62,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     } // <- INI ADALAH AKHIR DARI METODE onCreate()
 
-    /**
-     * Metode untuk melakukan login menggunakan Firebase Authentication.
-     * Metode ini harus berada di luar onCreate().
-     * Perhatikan "String email" dan "String password".
-     */
     private void loginUserWithFirebase(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {

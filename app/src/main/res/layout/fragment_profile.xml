@@ -104,15 +104,6 @@
                         style="@style/UserStatsText"
                         android:text="12\nPlaylist" />
 
-                    <TextView
-                        android:id="@+id/followers_count"
-                        style="@style/UserStatsText"
-                        android:text="1.2K\nFollowers" />
-
-                    <TextView
-                        android:id="@+id/following_count"
-                        style="@style/UserStatsText"
-                        android:text="150\nFollowing" />
                 </LinearLayout>
 
                 <!-- Tombol Aksi -->
@@ -134,16 +125,6 @@
                         android:textColor="@color/white"
                         app:strokeColor="@color/white" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/share_profile_button"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Bagikan"
-                        android:textColor="@color/white"
-                        app:strokeColor="@color/white" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

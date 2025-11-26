@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
 import com.example.awe.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import de.hdodenhof.circleimageview.CircleImageView; // Import untuk CircleImageView
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
@@ -118,7 +118,6 @@ public class ProfileFragment extends Fragment {
             // 2. Mengambil dan mengatur Foto Profil
             Uri photoUrl = currentUser.getPhotoUrl();
             if (photoUrl != null && getContext() != null) {
-                // Gunakan library seperti Glide atau Picasso untuk memuat gambar dari URL
                 Glide.with(getContext())
                         .load(photoUrl)
                         .placeholder(R.drawable.ic_profile) // Gambar default saat loading
