@@ -27,8 +27,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -46,7 +49,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("com.google.android.material:material:1.9.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }
