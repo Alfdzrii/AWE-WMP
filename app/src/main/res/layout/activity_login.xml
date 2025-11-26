@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Tidak punya akun? "/>
+            android:text="Dont have an account? "/>
 
         <TextView
             android:id="@+id/textViewRegister"
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hijau"
             android:textStyle="bold"
-            android:text="Register"/>
+            android:text="Register here"/>
 
     </LinearLayout>
 

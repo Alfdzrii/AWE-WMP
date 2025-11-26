@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Sudah punya akun? "/>
+            android:text="Already have an account? "/>
 
         <TextView
             android:id="@+id/textViewLogin"
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hijau"
             android:textStyle="bold"
-            android:text="Login"/>
+            android:text="Login here"/>
 
     </LinearLayout>
 
