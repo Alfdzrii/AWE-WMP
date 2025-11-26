@@ -120,41 +120,151 @@ public class ProfileFragment extends Fragment {
      */
     private void updateProfileUI() {
         if (currentUser != null) {
-            // 1. Mengambil dan mengatur Nama Pengguna (DisplayName)
+            // 1. Mengambil dan mengatur Nama Pengguna (DisplayName) - (Sudah ada)
             String username = currentUser.getDisplayName();
             if (username != null && !username.isEmpty()) {
                 textUsername.setText(username);
             } else {
-                // Jika nama tidak ada (misalnya login via email tanpa set nama),
-                // tampilkan placeholder atau bagian dari email.
-                textUsername.setText("Pengguna Baru");
+                textUsername.setText("New User");
             }
 
-            // 2. Mengambil dan mengatur Foto Profil
+            // 2. Mengambil dan mengatur Foto Profil - (Sudah ada)
             Uri photoUrl = currentUser.getPhotoUrl();
             if (photoUrl != null && getContext() != null) {
                 Glide.with(getContext())
                         .load(photoUrl)
-                        .placeholder(R.drawable.ic_profile) // Gambar default saat loading
-                        .error(R.drawable.ic_profile)       // Gambar jika gagal load
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
                         .into(profileImage);
             }
 
-            // Contoh: Mengatur email sebagai bio jika bio kosong
-            // String email = currentUser.getEmail();
-            // textBio.setText(email);
+            // --- TAMBAHKAN BLOK INI UNTUK MENGAMBIL BIO ---
+            // 3. Mengambil dan mengatur Bio dari Firestore
+            db.collection("users").document(currentUser.getUid()).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String bio = documentSnapshot.getString("bio");
+                            if (bio != null && !bio.isEmpty()) {
+                                textBio.setText(bio);
+                            } else {
+                                textBio.setText("Tap to edit bio"); // Placeholder jika bio kosong
+                            }
+                        } else {
+                            // Dokumen belum ada, buat dengan bio kosong
+                            // Ini penting agar updateBioInFirestore() tidak gagal nanti
+                            db.collection("users").document(currentUser.getUid()).set(new java.util.HashMap<>());
+                            textBio.setText("Tap to edit bio");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        textBio.setText("Bio not available");
+                    });
+            // ----------------------------------------------------
         }
     }
 
+
+    /**
+     * Menampilkan dialog untuk memasukkan URL gambar baru.
+     */
     private void showEditPhotoDialog() {
-        if (getcontext() != null) return;
+        if (getContext() == null) return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Edit Foto Profil");
+        builder.setTitle("Edit Profile Photo");
+        builder.setMessage("Please enter a new image URL.");
+
+        // Buat EditText untuk dialog
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_URI); // Tipe input untuk URL
+        builder.setView(input);
+
+        // Atur tombol "Save"
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newPhotoUrl = input.getText().toString().trim();
+            if (!newPhotoUrl.isEmpty()) {
+                // Panggil metode untuk memperbarui foto
+                updateProfilePhoto(newPhotoUrl);
+            } else {
+                Toast.makeText(getContext(), "URL cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Atur tombol "Cancel"
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    /**
+     * Menampilkan dialog untuk mengedit bio.
+     */
+    private void showEditBioDialog() {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Edit Bio");
 
         final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input)
+        input.setText(textBio.getText()); // Tampilkan bio saat ini
+        builder.setView(input);
 
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newBio = input.getText().toString().trim();
+            updateBioInFirestore(newBio);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
     }
+
+    /**
+     * Memperbarui URL foto profil di Firebase Auth dan Firestore.
+     * @param photoUrl URL gambar baru.
+     */
+    private void updateProfilePhoto(String photoUrl) {
+        if (currentUser == null) return;
+
+        Uri newUri = Uri.parse(photoUrl);
+
+        // 1. Perbarui di Firebase Authentication
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(newUri)
+                .build();
+
+        currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // 2. Jika berhasil, perbarui juga di Firestore agar sinkron
+                db.collection("users").document(currentUser.getUid())
+                        .update("photoUrl", photoUrl)
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(getContext(), "Profile photo updated!", Toast.LENGTH_SHORT).show();
+                            // Muat gambar baru menggunakan Glide
+                            if(getContext() != null) {
+                                Glide.with(getContext()).load(photoUrl).into(profileImage);
+                            }
+                        });
+            } else {
+                Toast.makeText(getContext(), "Failed to update photo: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Memperbarui bio di koleksi 'users' pada Firestore.
+     * @param newBio Bio baru yang akan disimpan.
+     */
+    private void updateBioInFirestore(String newBio) {
+        if (currentUser == null) return;
+
+        db.collection("users").document(currentUser.getUid())
+                .update("bio", newBio)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Bio updated!", Toast.LENGTH_SHORT).show();
+                    textBio.setText(newBio); // Perbarui UI secara langsung
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to update bio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }
