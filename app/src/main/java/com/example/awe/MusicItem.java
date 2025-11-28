@@ -1,24 +1,53 @@
 package com.example.awe;
 
 import android.net.Uri;
+import com.google.firebase.firestore.Exclude;
+import java.io.File;
 
 public class MusicItem {
-    private final String title;
-    private final Uri uri;
+    private String id;
+    private String title;
+    private String filePath; // Menggantikan uriString untuk kejelasan
     private boolean isPlaying = false;
     private boolean isFavorite = false;
 
-    public MusicItem(String title, Uri uri) {
+    // Konstruktor kosong untuk Firestore
+    public MusicItem() {}
+
+    public MusicItem(String title, String filePath) {
         this.title = title;
-        this.uri = uri;
+        this.filePath = filePath;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    // Membuat Uri dari file path. Metode ini lebih handal.
+    @Exclude
     public Uri getUri() {
-        return uri;
+        if (filePath == null) return null;
+        return Uri.fromFile(new File(filePath));
     }
 
     public boolean isPlaying() {

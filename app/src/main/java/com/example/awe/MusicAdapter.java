@@ -20,6 +20,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
     public interface OnItemInteractionListener {
         void onFavoriteClicked(MusicItem item, int position);
         void onPlayPauseClicked(MusicItem item, int position);
+        void onDeleteClicked(MusicItem item, int position);
     }
 
     public MusicAdapter(List<MusicItem> musicList, OnItemInteractionListener listener) {
@@ -60,6 +61,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
                 listener.onFavoriteClicked(currentItem, holder.getAdapterPosition());
             }
         });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClicked(currentItem, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -71,12 +78,14 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         TextView songTitle;
         ImageButton playPauseButton;
         ImageButton favoriteButton;
+        ImageButton deleteButton;
 
         public MusicViewHolder(@NonNull View itemView) {
             super(itemView);
             songTitle = itemView.findViewById(R.id.text_song_title);
             playPauseButton = itemView.findViewById(R.id.button_play_pause);
             favoriteButton = itemView.findViewById(R.id.button_favorite);
+            deleteButton = itemView.findViewById(R.id.button_delete);
         }
     }
 }
