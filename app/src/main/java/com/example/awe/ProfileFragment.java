@@ -100,17 +100,8 @@ public class ProfileFragment extends Fragment {
         // Menghubungkan TabLayout dengan ViewPager2
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> {
-                    switch (position) {
-                        case 0:
-                            tab.setText("Playlist");
-                            break;
-                        case 1:
-                            tab.setText("Favorit");
-                            break;
-                        case 2:
-                            tab.setText("Baru Didengar");
-                            break;
-                    }
+                    // Karena hanya ada satu tab, kita langsung set teksnya
+                    tab.setText("Favorites");
                 }
         ).attach();
     }

@@ -1,12 +1,12 @@
 // PlaylistsFragment.java
-package com.example.awe; // Sesuaikan dengan package Anda
+package com.example.awe;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.awe.R; // Sesuaikan dengan package Anda
+import com.example.awe.R;
 
 public class FavoritesFragment extends Fragment {
     @Override

@@ -16,14 +16,7 @@ public class ProfilePagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                // TODO: Ganti dengan Fragment Playlist Anda jika sudah ada
-                return new PlaceholderFragment(); 
-            case 1:
-                // Ini adalah tab Favorit, kita gunakan fragment yang sudah kita buat
-                return new FavoriteSongsFragment(); 
-            case 2:
-                // TODO: Ganti dengan Fragment History Anda jika sudah ada
-                return new PlaceholderFragment(); 
+                return new FavoriteSongsFragment();
             default:
                 return new PlaceholderFragment();
         }
@@ -31,6 +24,6 @@ public class ProfilePagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 1;
     }
 }

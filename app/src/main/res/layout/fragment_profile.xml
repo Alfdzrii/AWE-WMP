@@ -99,11 +99,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profile_image">
 
-                    <TextView
-                        android:id="@+id/playlists_count"
-                        style="@style/UserStatsText"
-                        android:text="12\nPlaylist" />
-
                 </LinearLayout>
 
                 <!-- Tombol Aksi -->
@@ -112,20 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/user_stats_layout">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/edit_profile_button"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:text="Edit Profil"
-                        android:textColor="@color/white"
-                        app:strokeColor="@color/white" />
-
-                </LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/user_stats_layout"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
