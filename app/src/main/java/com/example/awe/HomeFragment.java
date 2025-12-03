@@ -9,10 +9,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -45,7 +48,10 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
     private FloatingActionButton fabAddMusic;
     private RecyclerView recyclerViewMusic;
     private MusicAdapter musicAdapter;
-    private final ArrayList<MusicItem> musicList = new ArrayList<>();
+    private final ArrayList<MusicItem> displayedMusicList = new ArrayList<>();
+    private final ArrayList<MusicItem> fullMusicList = new ArrayList<>();
+
+    private EditText searchBar;
 
     private MediaPlayer mediaPlayer;
     private MusicItem currentPlayingItem = null;
@@ -136,8 +142,39 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
         super.onViewCreated(view, savedInstanceState);
         fabAddMusic = view.findViewById(R.id.fab_add_music);
         recyclerViewMusic = view.findViewById(R.id.recycler_view_music);
+        searchBar = view.findViewById(R.id.search_bar);
+
         setupRecyclerView();
         fabAddMusic.setOnClickListener(v -> checkPermissionAndOpenPicker());
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterMusic(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void filterMusic(String query) {
+        displayedMusicList.clear();
+        if (query.isEmpty()) {
+            displayedMusicList.addAll(fullMusicList);
+        } else {
+            for (MusicItem item : fullMusicList) {
+                if (item.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                    displayedMusicList.add(item);
+                }
+            }
+        }
+        if (musicAdapter != null) {
+            musicAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -154,13 +191,13 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
                 return;
             }
             if (snapshots != null) {
-                musicList.clear();
+                fullMusicList.clear();
                 for (QueryDocumentSnapshot doc : snapshots) {
                     MusicItem item = doc.toObject(MusicItem.class);
                     item.setId(doc.getId());
-                    musicList.add(item);
+                    fullMusicList.add(item);
                 }
-                musicAdapter.notifyDataSetChanged();
+                filterMusic(searchBar.getText().toString());
             }
         });
     }
@@ -192,7 +229,7 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
     }
 
     private void setupRecyclerView() {
-        musicAdapter = new MusicAdapter(musicList, this);
+        musicAdapter = new MusicAdapter(displayedMusicList, this);
         recyclerViewMusic.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewMusic.setAdapter(musicAdapter);
     }

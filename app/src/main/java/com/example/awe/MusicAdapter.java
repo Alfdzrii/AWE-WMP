@@ -1,5 +1,6 @@
 package com.example.awe;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -16,7 +18,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
     private final List<MusicItem> musicList;
     private final OnItemInteractionListener listener;
 
-    // Interface untuk menangani klik
     public interface OnItemInteractionListener {
         void onFavoriteClicked(MusicItem item, int position);
         void onPlayPauseClicked(MusicItem item, int position);
@@ -41,15 +42,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         MusicItem currentItem = musicList.get(position);
         holder.songTitle.setText(currentItem.getTitle());
 
-        // Atur status tombol play/pause berdasarkan data dari MusicItem
         holder.playPauseButton.setImageResource(
                 currentItem.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play_arrow);
 
-        // Atur status tombol favorit berdasarkan data dari MusicItem
-        holder.favoriteButton.setImageResource(
-                currentItem.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+        // --- PERUBAHAN UNTUK WARNA FAVORIT ---
+        if (currentItem.isFavorite()) {
+            holder.favoriteButton.setImageResource(R.drawable.ic_favorite); // Ikon terisi
+            holder.favoriteButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.merah))); // Warna merah
+        } else {
+            holder.favoriteButton.setImageResource(R.drawable.ic_favorite_border); // Ikon kosong
+            holder.favoriteButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.white))); // Warna putih
+        }
 
-        // Kirim event klik ke HomeFragment melalui interface
         holder.playPauseButton.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onPlayPauseClicked(currentItem, holder.getAdapterPosition());

@@ -4,12 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/abu"
     tools:context=".HomeFragment">
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/search_bar_background"
+        android:hint="Search for songs..."
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="12dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_music"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/search_bar"
         tools:listitem="@layout/list_item_music"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -21,6 +36,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/add_music"
         android:src="@drawable/ic_add"
+        app:backgroundTint="@color/hijau"
         app:tint="@android:color/white" />
 
 </RelativeLayout>
