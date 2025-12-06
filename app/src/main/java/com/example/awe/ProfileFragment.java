@@ -18,6 +18,7 @@ import android.widget.Toast; // <-- TAMBAHKAN INI
 import android.widget.EditText; // <-- TAMBAHKAN INI
 import android.text.InputType; // <-- TAMBAHKAN INI
 import androidx.appcompat.app.AlertDialog; // <-- TAMBAHKAN INI
+import android.graphics.Color;
 
 // Import yang dibutuhkan dari Firebase
 import com.google.firebase.auth.FirebaseAuth;
@@ -89,7 +90,8 @@ public class ProfileFragment extends Fragment {
             if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
                 // Judul di Toolbar akan muncul saat header di-scroll ke atas
-                toolbar.setTitle("Profil");
+                toolbar.setTitle("Profile");
+                toolbar.setTitleTextColor(Color.WHITE);
             }
         }
 

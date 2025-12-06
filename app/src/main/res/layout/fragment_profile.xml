@@ -5,27 +5,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/abu" 
     android:fitsSystemWindows="true"
     tools:context=".ProfileFragment">
 
-    <!-- AppBarLayout: Wadah untuk Toolbar dan header yang bisa collapse -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
+        android:background="@color/abu"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <!-- CollapsingToolbarLayout: Membuat header bisa mengecil saat digulir -->
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="@color/abu"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
-
+            app:toolbarId="@+id/toolbar"
+            app:titleEnabled="false"
+            app:collapsedTitleTextColor="@color/white">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -41,7 +42,7 @@
                     android:layout_height="96dp"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_profile"
-                    app:civ_border_color="@color/white"
+                    app:civ_border_color="@color/hijau"
                     app:civ_border_width="2dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +61,6 @@
                     app:layout_constraintEnd_toEndOf="@+id/profile_image"
                     app:tint="@color/white" />
 
-                <!-- Nama Pengguna dan Bio -->
                 <TextView
                     android:id="@+id/text_username"
                     android:layout_width="0dp"
@@ -88,8 +88,7 @@
                     app:layout_constraintStart_toStartOf="@+id/text_username"
                     app:layout_constraintTop_toBottomOf="@+id/text_username" />
 
-                <!-- Statistik Pengguna -->
-                <LinearLayout
+                 <LinearLayout
                     android:id="@+id/user_stats_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -101,7 +100,6 @@
 
                 </LinearLayout>
 
-                <!-- Tombol Aksi -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -111,30 +109,31 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Toolbar yang akan terlihat saat header di-collapse -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <!-- TabLayout untuk navigasi antar konten -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="?attr/colorPrimary"
+            android:background="@color/abu_muda"
+            app:tabIndicatorColor="@color/hijau"
             app:tabTextColor="@color/white"
-            app:tabIndicatorColor="@color/white"
             app:tabGravity="fill"
             app:tabMode="fixed"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- ViewPager2 untuk menampilkan konten dari setiap tab -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
