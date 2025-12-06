@@ -1,4 +1,3 @@
-// Pastikan nama package ini sesuai dengan lokasi file Anda
 package com.example.awe;
 
 import androidx.annotation.NonNull;

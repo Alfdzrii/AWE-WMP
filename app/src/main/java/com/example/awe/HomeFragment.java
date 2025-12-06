@@ -266,73 +266,22 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
                 })
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Gagal menghapus lagu.", Toast.LENGTH_SHORT).show());
     }
-
     @Override
     public void onPlayPauseClicked(MusicItem clickedItem, int clickedPosition) {
-        if (currentPlayingItem == clickedItem) {
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-                clickedItem.setPlaying(false);
-            } else if (mediaPlayer != null) {
-                mediaPlayer.start();
-                clickedItem.setPlaying(true);
-            }
-            musicAdapter.notifyItemChanged(clickedPosition);
-            return;
+        // Panggil MusicPlayer (yang terhubung ke Service)
+        MusicPlayer.getInstance().playOrPause(clickedItem.getTitle(), clickedItem.getFilePath());
+
+        // Update UI sederhana (agar icon berubah)
+        // Catatan: Idealnya gunakan Listener dari service, tapi untuk sekarang kita toggle manual
+        boolean isNowPlaying = !clickedItem.isPlaying();
+
+        // Reset semua item lain jadi pause (UI only)
+        for (MusicItem item : fullMusicList) {
+            item.setPlaying(false);
         }
 
-        stopCurrentMusic();
-
-        try {
-            String path = clickedItem.getFilePath();
-
-            // 1. Cek Validitas Path
-            if (path == null || path.isEmpty()) {
-                Toast.makeText(getContext(), "Error: Path kosong", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            File file = new File(path);
-
-            // 2. Cek apakah file ada DAN ukurannya tidak 0
-            if (!file.exists()) {
-                Toast.makeText(getContext(), "File hilang dari HP.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (file.length() == 0) {
-                Log.e(TAG, "File ditemukan tapi ukurannya 0 bytes (Kosong). Copy gagal.");
-                Toast.makeText(getContext(), "File lagu rusak (0 bytes). Hapus dan upload ulang.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            // 3. --- PERUBAHAN UTAMA: Gunakan FileInputStream & FileDescriptor ---
-            // Ini meminimalisir error permission pada Internal Storage
-            java.io.FileInputStream fis = new java.io.FileInputStream(file);
-
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(fis.getFD()); // Menggunakan File Descriptor
-
-            fis.close(); // Tutup stream setelah diserahkan ke MediaPlayer
-
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.setOnErrorListener(this);
-            mediaPlayer.setOnCompletionListener(mp -> stopCurrentMusic());
-
-            Log.d(TAG, "Sedang menyiapkan lagu via FileDescriptor. Size: " + file.length());
-            mediaPlayer.prepareAsync();
-
-            currentPlayingItem = clickedItem;
-            currentPlayingPosition = clickedPosition;
-
-        } catch (IOException e) {
-            Log.e(TAG, "Gagal memutar (IO Error): ", e);
-            Toast.makeText(getContext(), "Error memutar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            stopCurrentMusic();
-        } catch (Exception e) {
-            Log.e(TAG, "Gagal memutar (General Error): ", e);
-            stopCurrentMusic();
-        }
+        clickedItem.setPlaying(isNowPlaying);
+        musicAdapter.notifyDataSetChanged();
     }
 
     @Override
