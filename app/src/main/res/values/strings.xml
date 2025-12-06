@@ -7,4 +7,15 @@
     <string name="favorite">Favorite</string>
     <string name="add_music">Add Music</string>
     <string name="delete">Delete</string>
+
+        <!-- ↓↓↓ PASTE DI SINI ↓↓↓ -->
+        <string name="splash_welcome_text_formatted">Welcome to
+            <font color='#4CAF50'>
+                <b>Awe</b>
+            </font>
+            Music
+        </string>
+
+        <!-- Mungkin sudah ada string lain di sini -->
+        <!-- <string name="app_name">AWE-WMP</string> -->
 </resources>

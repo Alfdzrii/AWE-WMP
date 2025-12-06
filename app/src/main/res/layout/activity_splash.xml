@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="Welcome to WeMusic"
+        android:text="@string/splash_welcome_text_formatted"
         android:textColor="@color/white"
         android:textSize="48sp" />
 
