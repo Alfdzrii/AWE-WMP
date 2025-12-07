@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements MusicAdapter.OnItemInteractionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+public class HomeFragment extends Fragment implements MusicAdapter.OnItemInteractionListener {
 
     private static final String TAG = "HomeFragment";
     private FloatingActionButton fabAddMusic;
@@ -52,10 +51,6 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
     private final ArrayList<MusicItem> fullMusicList = new ArrayList<>();
 
     private EditText searchBar;
-
-    private MediaPlayer mediaPlayer;
-    private MusicItem currentPlayingItem = null;
-    private int currentPlayingPosition = -1;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ActivityResultLauncher<String[]> selectAudioLauncher;
@@ -183,6 +178,31 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
         loadMusicFromFirestore();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // SINKRONISASI ICON SAAT KEMBALI KE LAYAR INI
+        updatePlayingStatus();
+    }
+
+    private void updatePlayingStatus() {
+        if (fullMusicList == null || musicAdapter == null) return;
+
+        boolean isServicePlaying = MusicPlayer.getInstance().isPlaying();
+        String currentPath = MusicPlayer.getInstance().getCurrentPath();
+
+        // Update status untuk semua lagu di list
+        for (MusicItem item : fullMusicList) {
+            if (currentPath != null && currentPath.equals(item.getFilePath())) {
+                item.setPlaying(isServicePlaying);
+            } else {
+                item.setPlaying(false);
+            }
+        }
+        // Refresh adapter agar UI berubah
+        musicAdapter.notifyDataSetChanged();
+    }
+
     private void loadMusicFromFirestore() {
         if (musicCollection == null) return;
         musicListenerRegistration = musicCollection.orderBy("title").addSnapshotListener((snapshots, e) -> {
@@ -198,6 +218,9 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
                     fullMusicList.add(item);
                 }
                 filterMusic(searchBar.getText().toString());
+
+                // Update status play/pause setelah data baru dimuat
+                updatePlayingStatus();
             }
         });
     }
@@ -250,8 +273,10 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
             Toast.makeText(getContext(), "Gagal, user tidak login atau lagu tidak valid.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (item == currentPlayingItem) {
-            stopCurrentMusic();
+
+        // Hentikan lagu jika yang dihapus sedang diputar
+        if (MusicPlayer.getInstance().getCurrentPath().equals(item.getFilePath())) {
+            MusicPlayer.getInstance().pause();
         }
 
         musicCollection.document(item.getId()).delete()
@@ -266,69 +291,23 @@ public class HomeFragment extends Fragment implements MusicAdapter.OnItemInterac
                 })
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Gagal menghapus lagu.", Toast.LENGTH_SHORT).show());
     }
+
     @Override
     public void onPlayPauseClicked(MusicItem clickedItem, int clickedPosition) {
-        // Panggil MusicPlayer (yang terhubung ke Service)
+        // GUNAKAN MUSIC PLAYER SERVICE
         MusicPlayer.getInstance().playOrPause(clickedItem.getTitle(), clickedItem.getFilePath());
 
-        // Update UI sederhana (agar icon berubah)
-        // Catatan: Idealnya gunakan Listener dari service, tapi untuk sekarang kita toggle manual
-        boolean isNowPlaying = !clickedItem.isPlaying();
-
-        // Reset semua item lain jadi pause (UI only)
-        for (MusicItem item : fullMusicList) {
-            item.setPlaying(false);
-        }
-
-        clickedItem.setPlaying(isNowPlaying);
-        musicAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "MediaPlayer is prepared. Starting playback.");
-        mp.start();
-        if (currentPlayingItem != null) {
-            currentPlayingItem.setPlaying(true);
-            musicAdapter.notifyItemChanged(currentPlayingPosition);
-        }
-        mp.setOnCompletionListener(mediaPlayer -> stopCurrentMusic());
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        String errorMessage = "Error Code: (" + what + ", " + extra + ")";
-        Log.e(TAG, "MediaPlayer Error: " + errorMessage);
-
-        // Tampilkan kode error langsung di layar HP
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
-
-        stopCurrentMusic();
-        return true;
-    }
-
-    private void stopCurrentMusic() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        if (currentPlayingItem != null) {
-            currentPlayingItem.setPlaying(false);
-            if (recyclerViewMusic != null && musicAdapter != null) {
-                musicAdapter.notifyItemChanged(currentPlayingPosition);
-            }
-            currentPlayingItem = null;
-            currentPlayingPosition = -1;
-        }
+        // Update UI langsung
+        updatePlayingStatus();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        stopCurrentMusic();
         if (musicListenerRegistration != null) {
             musicListenerRegistration.remove();
         }
+        // JANGAN STOP MUSIK DI SINI AGAR TETAP JALAN DI BACKGROUND
     }
 
     private String getFileName(Context context, Uri uri) {

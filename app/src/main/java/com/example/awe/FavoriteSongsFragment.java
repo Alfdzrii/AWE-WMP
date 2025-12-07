@@ -1,6 +1,5 @@
 package com.example.awe;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,19 +21,14 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnItemInteractionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnItemInteractionListener {
 
     private static final String TAG = "FavoriteSongsFragment";
     private RecyclerView recyclerViewFavorites;
     private MusicAdapter musicAdapter;
     private final ArrayList<MusicItem> favoriteList = new ArrayList<>();
-
-    private MediaPlayer mediaPlayer;
-    private MusicItem currentPlayingItem = null;
-    private int currentPlayingPosition = -1;
 
     private FirebaseFirestore db;
     private CollectionReference musicCollection;
@@ -72,6 +66,33 @@ public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnIt
         loadFavoriteSongs();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // SINKRONISASI ICON SAAT KEMBALI KE LAYAR INI
+        // Agar jika lagu sedang diputar di background, icon di sini menyesuaikan (jadi pause)
+        updatePlayingStatus();
+    }
+
+    private void updatePlayingStatus() {
+        if (musicAdapter == null) return;
+
+        // Ambil status play/pause dan path lagu yang sedang main dari Service
+        boolean isServicePlaying = MusicPlayer.getInstance().isPlaying();
+        String currentPath = MusicPlayer.getInstance().getCurrentPath();
+
+        for (MusicItem item : favoriteList) {
+            // Jika path lagu ini sama dengan yang sedang diputar di Service
+            if (currentPath != null && currentPath.equals(item.getFilePath())) {
+                item.setPlaying(isServicePlaying);
+            } else {
+                item.setPlaying(false);
+            }
+        }
+        // Beritahu adapter untuk refresh tampilan icon
+        musicAdapter.notifyDataSetChanged();
+    }
+
     private void loadFavoriteSongs() {
         if (musicCollection == null) return;
 
@@ -89,7 +110,8 @@ public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnIt
                             item.setId(doc.getId());
                             favoriteList.add(item);
                         }
-                        musicAdapter.notifyDataSetChanged();
+                        // Setelah data baru dimuat, sinkronkan status play/pause
+                        updatePlayingStatus();
                     }
                 });
     }
@@ -104,52 +126,32 @@ public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnIt
     public void onFavoriteClicked(MusicItem item, int position) {
         if (musicCollection == null || item.getId() == null) return;
 
-        // Menghapus dari daftar favorit dengan mengubah status favorite menjadi false
+        // Un-favorite: Ubah status di Firestore, nanti akan hilang otomatis dari list karena listener
         musicCollection.document(item.getId()).update("favorite", false)
                 .addOnSuccessListener(aVoid -> {
-                    // Lagu akan otomatis hilang dari daftar karena listener Firestore aktif
                     Toast.makeText(getContext(), "Dihapus dari favorit", Toast.LENGTH_SHORT).show();
                 });
     }
 
     @Override
     public void onPlayPauseClicked(MusicItem clickedItem, int clickedPosition) {
-        if (currentPlayingItem == clickedItem) {
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-                clickedItem.setPlaying(false);
-            } else if (mediaPlayer != null) {
-                mediaPlayer.start();
-                clickedItem.setPlaying(true);
-            }
-            musicAdapter.notifyItemChanged(clickedPosition);
-            return;
-        }
+        // PERBAIKAN UTAMA:
+        // Gunakan MusicPlayer (Global/Service), bukan MediaPlayer lokal.
+        // Ini memastikan musik tetap jalan saat pindah layar dan tidak double.
+        MusicPlayer.getInstance().playOrPause(clickedItem.getTitle(), clickedItem.getFilePath());
 
-        stopCurrentMusic();
-
-        try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setOnErrorListener(this);
-            mediaPlayer.setDataSource(clickedItem.getFilePath());
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.prepareAsync();
-
-            currentPlayingItem = clickedItem;
-            currentPlayingPosition = clickedPosition;
-
-        } catch (IOException e) {
-            Log.e(TAG, "setDataSource failed", e);
-            stopCurrentMusic();
-        }
+        // Langsung update UI agar responsif
+        updatePlayingStatus();
     }
 
     @Override
     public void onDeleteClicked(MusicItem item, int position) {
         if (musicCollection == null || item.getId() == null) return;
 
-        if (item == currentPlayingItem) {
-            stopCurrentMusic();
+        // Jika lagu yang mau dihapus sedang diputar, stop dulu lewat Service
+        String currentPath = MusicPlayer.getInstance().getCurrentPath();
+        if (currentPath != null && currentPath.equals(item.getFilePath())) {
+            MusicPlayer.getInstance().pause(); // Atau stop() jika ingin benar-benar berhenti
         }
 
         musicCollection.document(item.getId()).delete()
@@ -157,52 +159,19 @@ public class FavoriteSongsFragment extends Fragment implements MusicAdapter.OnIt
                     File fileToDelete = new File(item.getFilePath());
                     if (fileToDelete.exists() && fileToDelete.delete()) {
                         Log.d(TAG, "File internal berhasil dihapus: " + item.getFilePath());
-                    } else {
-                        Log.w(TAG, "Gagal menghapus file internal: " + item.getFilePath());
                     }
                     Toast.makeText(getContext(), "Lagu dihapus permanen", Toast.LENGTH_SHORT).show();
                 });
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
-        mp.start();
-        if (currentPlayingItem != null) {
-            currentPlayingItem.setPlaying(true);
-            musicAdapter.notifyItemChanged(currentPlayingPosition);
-        }
-        mp.setOnCompletionListener(mediaPlayer -> stopCurrentMusic());
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.e(TAG, "MediaPlayer Error: what=" + what + ", extra=" + extra);
-        Toast.makeText(getContext(), "Tidak dapat memutar lagu ini.", Toast.LENGTH_SHORT).show();
-        stopCurrentMusic();
-        return true;
-    }
-
-    private void stopCurrentMusic() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        if (currentPlayingItem != null) {
-            currentPlayingItem.setPlaying(false);
-            if (recyclerViewFavorites != null && musicAdapter != null) {
-                musicAdapter.notifyItemChanged(currentPlayingPosition);
-            }
-            currentPlayingItem = null;
-            currentPlayingPosition = -1;
-        }
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
-        stopCurrentMusic();
+        // Hentikan listener Firestore agar hemat data
         if (favoritesListenerRegistration != null) {
             favoritesListenerRegistration.remove();
         }
+        // CATATAN PENTING:
+        // Jangan panggil stopMusic() di sini agar musik tetap jalan di background!
     }
 }

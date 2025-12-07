@@ -8,7 +8,11 @@ public class MusicItem {
     private String id;
     private String title;
     private String filePath; // Menggantikan uriString untuk kejelasan
+
+    // Field ini TIDAK disimpan di database, hanya untuk UI
+    @Exclude
     private boolean isPlaying = false;
+
     private boolean isFavorite = false;
 
     // Konstruktor kosong untuk Firestore
@@ -50,10 +54,12 @@ public class MusicItem {
         return Uri.fromFile(new File(filePath));
     }
 
+    @Exclude
     public boolean isPlaying() {
         return isPlaying;
     }
 
+    @Exclude
     public void setPlaying(boolean playing) {
         isPlaying = playing;
     }
