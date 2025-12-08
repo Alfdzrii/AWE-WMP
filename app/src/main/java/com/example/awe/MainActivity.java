@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+
+
 //REGISTER PAGE
 public class MainActivity extends AppCompatActivity {
     Button BtnRegist;
