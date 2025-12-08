@@ -179,4 +179,5 @@ public class LoginActivity extends AppCompatActivity implements ProfileAdapter.O
             showLoginForm();
         }
     }
+
 }
