@@ -68,6 +68,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
             super(itemView);
             emailTextView = itemView.findViewById(R.id.profile_email);
             removeButton = itemView.findViewById(R.id.remove_account_button);
+
         }
     }
 }
