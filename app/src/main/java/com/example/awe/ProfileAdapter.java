@@ -71,5 +71,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
         }
     }
+
 }
 
