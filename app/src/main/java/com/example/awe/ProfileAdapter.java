@@ -15,7 +15,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     private final List<SavedAccount> accountList;
     private final OnProfileInteractionListener listener;
 
-    // Interface untuk menangani klik pada item profil
+    // Interface untuk klik profil
     public interface OnProfileInteractionListener {
         void onProfileClicked(SavedAccount account);
         void onRemoveClicked(SavedAccount account, int position);
@@ -39,14 +39,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         SavedAccount currentAccount = accountList.get(position);
         holder.emailTextView.setText(currentAccount.getEmail());
 
-        // Menangani klik pada seluruh item
+        // klik pada seluruh item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onProfileClicked(currentAccount);
             }
         });
 
-        // Menangani klik pada tombol hapus
+        //  klik pada tombol hapus
         holder.removeButton.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onRemoveClicked(currentAccount, holder.getAdapterPosition());

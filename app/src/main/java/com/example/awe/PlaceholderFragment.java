@@ -15,7 +15,6 @@ public class PlaceholderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Buat sebuah TextView sederhana sebagai placeholder
         TextView textView = new TextView(getContext());
         textView.setText("Fitur ini sedang dalam pengembangan.");
         textView.setGravity(android.view.Gravity.CENTER);
