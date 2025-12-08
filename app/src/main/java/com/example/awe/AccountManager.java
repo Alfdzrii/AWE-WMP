@@ -47,18 +47,20 @@ public class AccountManager {
      */
     public void saveOrUpdateAccount(SavedAccount newAccount) {
         List<SavedAccount> accounts = getSavedAccounts();
-        
+
         boolean accountExists = false;
         for (int i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).getUid().equals(newAccount.getUid())) {
-                accounts.set(i, newAccount); // Update akun yang sudah ada
+            // === PERUBAHAN DI SINI ===
+            // Ganti getUid() menjadi getEmail() agar tidak ada duplikat email
+            if (accounts.get(i).getEmail().equals(newAccount.getEmail())) {
+                accounts.set(i, newAccount); // Update akun yang sudah ada (termasuk UID baru jika ada)
                 accountExists = true;
                 break;
             }
         }
 
         if (!accountExists) {
-            accounts.add(newAccount); // Tambah akun baru
+            accounts.add(newAccount); // Tambah akun baru jika email belum ada
         }
 
         saveAccountsList(accounts);

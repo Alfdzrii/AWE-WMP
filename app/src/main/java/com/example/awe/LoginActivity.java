@@ -49,8 +49,15 @@ public class LoginActivity extends AppCompatActivity implements ProfileAdapter.O
     protected void onStart() {
         super.onStart();
         // PERIKSA APAKAH PENGGUNA SUDAH LOGIN DARI SESI SEBELUMNYA
-        if (mAuth.getCurrentUser() != null) {
-            // Jika ya, langsung masuk (inilah fitur "cookie" atau "ingat saya")
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // Ambil user saat ini
+
+        if (currentUser != null) {
+            // === PERBAIKAN DI SINI ===
+            // Pastikan data tersimpan di AccountManager sebelum pindah (Self-healing)
+            SavedAccount account = new SavedAccount(currentUser.getUid(), currentUser.getEmail());
+            accountManager.saveOrUpdateAccount(account);
+            // =========================
+
             navigateToHome();
         } else {
             // Jika tidak, tampilkan halaman login (daftar profil atau form)
