@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     Toast.makeText(getApplicationContext(), "Success to Register!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                    finish(); // Tambahkan finish agar user tidak bisa back ke form register
+                                    finish();
                                 }
                             }
                         });
