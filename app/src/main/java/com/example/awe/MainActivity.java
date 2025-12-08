@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+
+
 //REGISTER PAGE
 public class MainActivity extends AppCompatActivity {
     Button BtnRegist;
@@ -72,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // ... import lainnya
-// Pastikan import AccountManager dan SavedAccount (karena satu package, biasanya otomatis)
-
     private void registUser(String email, String password, final String username) {
         Auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -90,16 +89,14 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    // === PERBAIKAN DI SINI ===
                                     // Simpan akun ke local storage (Cookie/AccountManager)
                                     AccountManager accountManager = new AccountManager(MainActivity.this);
                                     SavedAccount newAccount = new SavedAccount(user.getUid(), user.getEmail());
                                     accountManager.saveOrUpdateAccount(newAccount);
-                                    // =========================
 
                                     Toast.makeText(getApplicationContext(), "Success to Register!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                    finish(); // Tambahkan finish agar user tidak bisa back ke form register
+                                    finish();
                                 }
                             }
                         });
