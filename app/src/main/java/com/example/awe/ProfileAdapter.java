@@ -70,5 +70,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
             removeButton = itemView.findViewById(R.id.remove_account_button);
         }
     }
+
 }
 
